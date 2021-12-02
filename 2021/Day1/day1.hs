@@ -1,8 +1,4 @@
-read_input :: IO String
-read_input = readFile "input.txt"
-
-parse_int :: String -> Integer
-parse_int s = read s :: Integer
+import Util
 
 parse_input :: String -> []Integer
 parse_input s = map parse_int (lines s)
@@ -16,11 +12,8 @@ count_increases x = foldl (+) 0 (zipWith is_greater x (tail x))
 sliding_window_sum :: Integer -> [Integer] -> [Integer]
 sliding_window_sum windowSize list = if windowSize == 1 then list else zipWith (+) list (sliding_window_sum (windowSize - 1) (tail list))
 
-format_result_output :: Integer -> Integer -> String
-format_result_output partNum resultVal = "Part " ++ (show partNum) ++ " result: " ++ (show resultVal)
-
 main = do
-  in_str <- read_input
+  in_str <- read_input "input.txt"
   let input = parse_input in_str
   -- Part 1
   let result1 = count_increases input
