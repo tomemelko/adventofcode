@@ -1,5 +1,5 @@
 read_input :: IO String
-read_input = readFile "day1_input.txt"
+read_input = readFile "input.txt"
 
 parse_int :: String -> Integer
 parse_int s = read s :: Integer
