@@ -18,8 +18,9 @@ slidingWindowSum windowSize list
   | windowSize == 1 = list
   | otherwise       = zipWith (+) list $ slidingWindowSum (windowSize - 1) $ tail list
 
-main = do
-  in_str <- readInput "input.txt"
+showDay :: String -> IO ()
+showDay filename = do
+  in_str <- readInput filename
   -- Part 1
   printPartResult 1 $ countIncreases $ parseInput in_str
   -- Part 2

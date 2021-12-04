@@ -1,3 +1,5 @@
+module Day3 where
+
 import Util
 import Data.Bits
 import Numeric (showIntAtBase)
@@ -82,8 +84,9 @@ getCo2Rating numBits = getRating numBits filterMajorityBits
 calcLifeSupport :: Int -> [Int] -> Int
 calcLifeSupport numBits ins = getOxyRating numBits ins * getCo2Rating numBits ins
 
-main = do
-  inStr <- readInput "input.txt"
+showDay :: String -> IO ()
+showDay filename = do
+  inStr <- readInput filename
   let numBits = length (head (lines inStr))
   -- Part 1
   printPartResult 1 $ calcPower numBits $ parseInput inStr
