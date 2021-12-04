@@ -1,18 +1,20 @@
 module Util (
-  read_input
-, parse_int
-, format_result_output
-, print_part_result
+  readInput
+, parseInt
+, formatResultOutput
+, printPartResult
+, split
 ) where
 
-read_input :: String -> IO String
-read_input s = readFile s
+readInput :: String -> IO String
+readInput = readFile
 
-parse_int :: String -> Integer
-parse_int s = read s :: Integer
+parseInt :: Read a => String -> a
+parseInt = read
 
-format_result_output :: (Show a) => Integer -> a -> String
-format_result_output partNum resultVal = "Part " ++ (show partNum) ++ " result: " ++ (show resultVal)
+formatResultOutput :: (Show a) => Integer -> a -> String
+formatResultOutput partNum resultVal = "Part " ++ show partNum ++ " result: " ++ show resultVal
 
-print_part_result :: (Show a) => Integer -> a -> IO ()
-print_part_result partNum resultVal = print $ format_result_output partNum resultVal
+printPartResult :: (Show a) => Integer -> a -> IO ()
+printPartResult partNum resultVal = print $ formatResultOutput partNum resultVal
+
