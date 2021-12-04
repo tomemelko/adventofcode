@@ -1,3 +1,5 @@
+module Day1 where
+
 import Util
 
 parseInput :: String -> [Integer]

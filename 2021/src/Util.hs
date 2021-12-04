@@ -17,4 +17,3 @@ formatResultOutput partNum resultVal = "Part " ++ show partNum ++ " result: " ++
 
 printPartResult :: (Show a) => Integer -> a -> IO ()
 printPartResult partNum resultVal = print $ formatResultOutput partNum resultVal
-
