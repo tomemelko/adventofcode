@@ -93,5 +93,5 @@ showDay :: String -> IO ()
 showDay filename = do
   inStr <- readInput filename
   let state = loadInitialGameState inStr
-  printPartResult 1 $ calcPart1 state
-  printPartResult 2 $ calcPart2 state
+  printPartResult 4 1 $ calcPart1 state
+  printPartResult 4 2 $ calcPart2 state

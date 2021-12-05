@@ -22,6 +22,6 @@ showDay :: String -> IO ()
 showDay filename = do
   in_str <- readInput filename
   -- Part 1
-  printPartResult 1 $ countIncreases $ parseInput in_str
+  printPartResult 1 1 $ countIncreases $ parseInput in_str
   -- Part 2
-  printPartResult 2 $ countIncreases $ slidingWindowSum 3 $ parseInput in_str
+  printPartResult 1 2 $ countIncreases $ slidingWindowSum 3 $ parseInput in_str

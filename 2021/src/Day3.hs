@@ -89,6 +89,6 @@ showDay filename = do
   inStr <- readInput filename
   let numBits = length (head (lines inStr))
   -- Part 1
-  printPartResult 1 $ calcPower numBits $ parseInput inStr
+  printPartResult 3 1 $ calcPower numBits $ parseInput inStr
   -- Part 2
-  printPartResult 2 $ calcLifeSupport numBits $ parseInput inStr
+  printPartResult 3 2 $ calcLifeSupport numBits $ parseInput inStr
