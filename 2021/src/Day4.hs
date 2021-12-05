@@ -50,8 +50,20 @@ boardIsWinner cn b = checkCols cn b || checkRows cn b
 anyBoardIsWinner :: Numbers -> [GameBoard] -> Bool
 anyBoardIsWinner = any . boardIsWinner
 
+allButOneBoardIsWinner :: Numbers -> [GameBoard] -> Bool
+allButOneBoardIsWinner cn bs = length (filter (not . boardIsWinner cn) bs) == 1
+
+allBoardsAreWinner :: Numbers -> [GameBoard] -> Bool
+allBoardsAreWinner = all . boardIsWinner
+
+filterBoards :: (GameBoard -> Bool) -> [GameBoard] -> GameBoard
+filterBoards filterFunc = head . filter filterFunc
+
 firstWinner :: Numbers -> [GameBoard] -> GameBoard
-firstWinner cn bs = head $ filter (boardIsWinner cn) bs
+firstWinner cn = filterBoards (boardIsWinner cn)
+
+firstNonWinner :: Numbers -> [GameBoard] -> GameBoard
+firstNonWinner cn = filterBoards (not . boardIsWinner cn)
 
 getFirstWinningBoard :: [Int] -> [GameBoard] -> (Numbers, GameBoard)
 getFirstWinningBoard = go []
@@ -60,14 +72,26 @@ getFirstWinningBoard = go []
       | anyBoardIsWinner cn bs = (cn, firstWinner cn bs)
       | otherwise              = go (head numbersToCall : cn) (tail numbersToCall) bs
 
+getLastWinningBoard :: [Int] -> [GameBoard] -> (Numbers, GameBoard)
+getLastWinningBoard = go []
+  where
+    go cn numbersToCall bs
+      | allBoardsAreWinner cn bs     = (cn, head bs)
+      | allButOneBoardIsWinner cn bs = go (head numbersToCall : cn) (tail numbersToCall) [firstNonWinner cn bs]
+      | otherwise                    = go (head numbersToCall : cn) (tail numbersToCall) bs
+
 calcBoardScore :: Numbers -> GameBoard -> Int
 calcBoardScore cn b = head cn * sum (filter (`notElem` cn) (concat b))
 
 calcPart1 :: GameState -> Int
 calcPart1 state = uncurry calcBoardScore $ getFirstWinningBoard (numbersToCall state) (boards state)
 
+calcPart2 :: GameState -> Int
+calcPart2 state = uncurry calcBoardScore $ getLastWinningBoard (numbersToCall state) (boards state)
+
 showDay :: String -> IO ()
 showDay filename = do
   inStr <- readInput filename
   let state = loadInitialGameState inStr
   printPartResult 1 $ calcPart1 state
+  printPartResult 2 $ calcPart2 state
