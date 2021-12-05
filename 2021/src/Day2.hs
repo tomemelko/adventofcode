@@ -16,6 +16,7 @@ step pos cmd
   | fst cmd == "forward" = SubmarinePosition {lateral = lateral pos + read (snd cmd), depth = depth pos + aim pos * read (snd cmd), aim = aim pos}
   | fst cmd == "down"    = SubmarinePosition {lateral = lateral pos, depth = depth pos, aim = aim pos + read (snd cmd)}
   | fst cmd == "up"      = SubmarinePosition {lateral = lateral pos, depth = depth pos, aim = aim pos - read (snd cmd)}
+  | otherwise            = error $ "Unknown command " ++ fst cmd
 
 calcAimAndDepth :: [SubmarineCommand] -> SubmarinePosition
 calcAimAndDepth = foldl step (SubmarinePosition {lateral = 0, depth = 0, aim = 0})
