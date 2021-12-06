@@ -8,6 +8,7 @@ import qualified Day2
 import qualified Day3
 import qualified Day4
 import qualified Day5
+import qualified Day6
 
 main :: IO ()
 main = do
@@ -21,6 +22,6 @@ main = do
       Day3.showDay (printDayResult 3) "inputs/Day3/input.txt"
       Day4.showDay (printDayResult 4) "inputs/Day4/input.txt"
       Day5.showDay (printDayResult 5) "inputs/Day5/input.txt"
-    ["today", "easy"] -> Day5.showDay (printDayResult 5) "inputs/Day5/input_simple.txt"
-    ["today", "hard"] -> Day5.showDay (printDayResult 5) "inputs/Day5/input.txt"
+    ["today", "easy"] -> Day6.showDay (printDayResult 5) "inputs/Day6/input_simple.txt"
+    ["today", "hard"] -> Day6.showDay (printDayResult 5) "inputs/Day6/input.txt"
     

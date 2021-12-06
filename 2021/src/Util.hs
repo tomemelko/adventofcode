@@ -4,6 +4,7 @@ module Util (
 , formatResultOutput
 , printDayResult
 , split
+, count
 ) where
 
 import Data.Maybe
@@ -28,3 +29,6 @@ split p s = case dropWhile p s of
   [] -> []
   s' -> w : split p s''
     where (w, s'') = break p s'
+
+count :: (a -> Bool) -> [a] -> Int
+count f = length . filter f

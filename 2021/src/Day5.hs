@@ -48,10 +48,10 @@ filterDiagonalLines :: [Line] -> [Line]
 filterDiagonalLines = filter (\l -> (x . fst) l == (x . snd) l || (y . fst) l == (y . snd) l)
 
 calcPart1 :: [Line] -> Int
-calcPart1 = length . filter ((>1) . snd) . countRepeats . concatMap getPointsOnLine . filterDiagonalLines
+calcPart1 = count ((>1) . snd) . countRepeats . concatMap getPointsOnLine . filterDiagonalLines
 
 calcPart2 :: [Line] -> Int
-calcPart2 = length . filter ((>1) . snd) . countRepeats . concatMap getPointsOnLine
+calcPart2 = count ((>1) . snd) . countRepeats . concatMap getPointsOnLine
 
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
