@@ -2,6 +2,7 @@ module Main where
 
 import System.Environment
 
+import Util
 import qualified Day1
 import qualified Day2
 import qualified Day3
@@ -13,12 +14,13 @@ main = do
   args <- getArgs
   case args of 
     [] -> print "Arg required: can be one of 'all', 'today easy', or 'today hard'"
-    ["all"] -> do 
-      Day1.showDay "inputs/Day1/input.txt"
-      Day2.showDay "inputs/Day2/input.txt"
-      Day3.showDay "inputs/Day3/input.txt"
-      Day4.showDay "inputs/Day4/input.txt"
-      Day5.showDay "inputs/Day5/input.txt"
-    ["today", "easy"] -> Day5.showDay "inputs/Day5/input_simple.txt"
-    ["today", "hard"] -> Day5.showDay "inputs/Day5/input.txt"
+    ["all"] -> do
+      -- I really wish there was a way to reference these by string name so I didn't have to copy-paste these lines. Template Haskell looks scary :(
+      Day1.showDay (printDayResult 1) "inputs/Day1/input.txt"
+      Day2.showDay (printDayResult 2) "inputs/Day2/input.txt"
+      Day3.showDay (printDayResult 3) "inputs/Day3/input.txt"
+      Day4.showDay (printDayResult 4) "inputs/Day4/input.txt"
+      Day5.showDay (printDayResult 5) "inputs/Day5/input.txt"
+    ["today", "easy"] -> Day5.showDay (printDayResult 5) "inputs/Day5/input_simple.txt"
+    ["today", "hard"] -> Day5.showDay (printDayResult 5) "inputs/Day5/input.txt"
     

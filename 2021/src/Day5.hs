@@ -55,8 +55,8 @@ calcPart1 ls = (length . filter (>=2) . map (`countLinesOnPoint` filterDiagonalL
 calcPart2 :: [Line] -> Int
 calcPart2 ls = (length . filter (>=2) . map (`countLinesOnPoint` ls) . getAllPoints) ls
 
-showDay :: String -> IO ()
-showDay filename = do
+showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
+showDay printPartResult filename = do
   inStr <- readInput filename
-  printPartResult 5 1 $ (calcPart1 . parseInput) inStr
-  printPartResult 5 2 $ (calcPart2 . parseInput) inStr
+  printPartResult 1 $ (calcPart1 . parseInput) inStr
+  printPartResult 2 $ (calcPart2 . parseInput) inStr

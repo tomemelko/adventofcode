@@ -84,11 +84,11 @@ getCo2Rating numBits = getRating numBits filterMajorityBits
 calcLifeSupport :: Int -> [Int] -> Int
 calcLifeSupport numBits ins = getOxyRating numBits ins * getCo2Rating numBits ins
 
-showDay :: String -> IO ()
-showDay filename = do
+showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
+showDay printPartResult filename = do
   inStr <- readInput filename
   let numBits = length (head (lines inStr))
   -- Part 1
-  printPartResult 3 1 $ calcPower numBits $ parseInput inStr
+  printPartResult 1 $ calcPower numBits $ parseInput inStr
   -- Part 2
-  printPartResult 3 2 $ calcLifeSupport numBits $ parseInput inStr
+  printPartResult 2 $ calcLifeSupport numBits $ parseInput inStr

@@ -18,10 +18,10 @@ slidingWindowSum windowSize list
   | windowSize == 1 = list
   | otherwise       = zipWith (+) list $ slidingWindowSum (windowSize - 1) $ tail list
 
-showDay :: String -> IO ()
-showDay filename = do
+showDay :: (Integer -> Integer -> IO ()) -> String -> IO ()
+showDay printPartResult filename = do
   in_str <- readInput filename
   -- Part 1
-  printPartResult 1 1 $ countIncreases $ parseInput in_str
+  printPartResult 1 $ countIncreases $ parseInput in_str
   -- Part 2
-  printPartResult 1 2 $ countIncreases $ slidingWindowSum 3 $ parseInput in_str
+  printPartResult 2 $ countIncreases $ slidingWindowSum 3 $ parseInput in_str

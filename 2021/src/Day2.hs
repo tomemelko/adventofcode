@@ -21,13 +21,13 @@ step pos cmd
 calcAimAndDepth :: [SubmarineCommand] -> SubmarinePosition
 calcAimAndDepth = foldl step (SubmarinePosition {lateral = 0, depth = 0, aim = 0})
 
-showDay :: String -> IO ()
-showDay filename = do
+showDay :: (Integer -> Integer -> IO ()) ->String -> IO ()
+showDay printPartResult filename = do
   inStr <- readInput filename
   let input = parseInput inStr
   let curried = sumDirection input
   -- Part 1
-  printPartResult 2 1 $ curried "forward" * (curried "down" - curried "up")
+  printPartResult 1 $ curried "forward" * (curried "down" - curried "up")
   -- Part 2
   let result2 = calcAimAndDepth input
-  printPartResult 2 2 (depth result2 * lateral result2)
+  printPartResult 2 (depth result2 * lateral result2)

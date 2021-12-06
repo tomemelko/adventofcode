@@ -2,7 +2,7 @@ module Util (
   readInput
 , parseInt
 , formatResultOutput
-, printPartResult
+, printDayResult
 , split
 ) where
 
@@ -19,8 +19,8 @@ parseInt = fromJust . readMaybe
 formatResultOutput :: (Show a) => Integer -> Integer -> a -> String
 formatResultOutput dayNum partNum resultVal = "Day " ++ show dayNum ++ " Part " ++ show partNum ++ " result: " ++ show resultVal
 
-printPartResult :: (Show a) => Integer -> Integer -> a -> IO ()
-printPartResult dayNum partNum resultVal = print $ formatResultOutput dayNum partNum resultVal
+printDayResult :: (Show a) => Integer -> Integer -> a -> IO ()
+printDayResult dayNum partNum resultVal = print $ formatResultOutput dayNum partNum resultVal
 
 -- This is a modified `words` that's more generic, and therefore can be used to split lists of strings on strings in addition to strings on chars
 split :: (a -> Bool) -> [a] -> [[a]]

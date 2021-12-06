@@ -89,9 +89,9 @@ calcPart1 state = uncurry calcBoardScore $ getFirstWinningBoard (numbersToCall s
 calcPart2 :: GameState -> Int
 calcPart2 state = uncurry calcBoardScore $ getLastWinningBoard (numbersToCall state) (boards state)
 
-showDay :: String -> IO ()
-showDay filename = do
+showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
+showDay printPartResult filename = do
   inStr <- readInput filename
   let state = loadInitialGameState inStr
-  printPartResult 4 1 $ calcPart1 state
-  printPartResult 4 2 $ calcPart2 state
+  printPartResult 1 $ calcPart1 state
+  printPartResult 2 $ calcPart2 state
