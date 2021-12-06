@@ -52,7 +52,11 @@ countLinesOnPoint p = length . filter (member p)
 calcPart1 :: [Line] -> Int
 calcPart1 ls = (length . filter (>=2) . map (`countLinesOnPoint` filterDiagonalLines ls) . getAllPoints) ls
 
+calcPart2 :: [Line] -> Int
+calcPart2 ls = (length . filter (>=2) . map (`countLinesOnPoint` ls) . getAllPoints) ls
+
 showDay :: String -> IO ()
 showDay filename = do
   inStr <- readInput filename
   printPartResult 5 1 $ (calcPart1 . parseInput) inStr
+  printPartResult 5 2 $ (calcPart2 . parseInput) inStr
