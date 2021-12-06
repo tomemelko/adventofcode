@@ -17,7 +17,7 @@ parseInput = foldl fold IntMap.empty . map (parseInt :: String -> Int). split (=
   fold m a = addsert a 1 m
 
 tickOnce :: FishMap -> FishMap
-tickOnce fs = IntMap.filterWithKey (\k _ -> k >= 0) (IntMap.mapKeys (subtract 1) (addsert 7 (findOr0 0 fs) (addsert 9 (findOr0 0 fs) fs)))
+tickOnce fs = (IntMap.filterWithKey (\k _ -> k >= 0) . IntMap.mapKeys (subtract 1) . addsert 7 (findOr0 0 fs) . addsert 9 (findOr0 0 fs)) fs
 
 modelFish :: Int -> FishMap -> FishMap
 modelFish d fs
@@ -30,8 +30,12 @@ sumValues = sum . IntMap.elems
 calcPart1 :: FishMap -> Int
 calcPart1 = sumValues . modelFish 80
 
+calcPart2 :: FishMap -> Int
+calcPart2 = sumValues . modelFish 256
+
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   inStr <- readInput filename
   printPartResult 1 $ (calcPart1 . parseInput) inStr
+  printPartResult 1 $ (calcPart2 . parseInput) inStr
 
