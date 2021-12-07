@@ -37,5 +37,5 @@ showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   inStr <- readInput filename
   printPartResult 1 $ (calcPart1 . parseInput) inStr
-  printPartResult 1 $ (calcPart2 . parseInput) inStr
+  printPartResult 2 $ (calcPart2 . parseInput) inStr
 
