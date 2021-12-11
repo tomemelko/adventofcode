@@ -1,6 +1,7 @@
 module Util (
   readInput
 , parseInt
+, charToInt
 , formatResultOutput
 , printDayResult
 , split
@@ -16,6 +17,9 @@ readInput = readFile
 
 parseInt :: HasCallStack => Read a => String -> a
 parseInt = fromJust . readMaybe
+
+charToInt :: Char -> Int
+charToInt c = parseInt [c]
 
 formatResultOutput :: (Show a) => Integer -> Integer -> a -> String
 formatResultOutput dayNum partNum resultVal = "Day " ++ show dayNum ++ " Part " ++ show partNum ++ " result: " ++ show resultVal
