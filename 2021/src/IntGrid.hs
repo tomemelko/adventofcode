@@ -18,6 +18,9 @@ rowString maxCol r g = unwords [ (show . get g) (r, col) | col <- [0..maxCol]]
 tableString :: Grid -> String
 tableString g = unlines [ rowString ((snd . maxPt) g) r g | r <- [0..(fst . maxPt) g] ]
 
+prettyPrint :: Grid -> IO ()
+prettyPrint = putStr . tableString
+
 get :: Grid -> Point -> Int
 get g p = fromJust (Map.lookup p g)
 

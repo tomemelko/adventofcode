@@ -61,10 +61,21 @@ doRounds limit g = go limit (g, 0) where
   go 0 (g, i) = (g, i)
   go c v = go (c - 1) (doRound v)
 
+getFirstRoundOfSimultaneousFlash :: Grid -> Int
+getFirstRoundOfSimultaneousFlash = go 0 where
+  go :: Int -> Grid -> Int
+  go roundNumber g
+    | all (==0) g = roundNumber
+    | otherwise = go (roundNumber + 1) ((fst . doRound) (g, 0))
+
 calcPart1 :: Grid -> Int
 calcPart1 = snd . doRounds 100
+
+calcPart2 :: Grid -> Int
+calcPart2 = getFirstRoundOfSimultaneousFlash
 
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   inStr <- readInput filename
   printPartResult 1 $ (calcPart1 . parseInput) inStr
+  printPartResult 2 $ (calcPart2 . parseInput) inStr
