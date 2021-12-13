@@ -1,18 +1,20 @@
 module Day9 where
 
-import Util
 import Data.Map (Map)
 import Data.Maybe
-import qualified Data.Bifunctor
+import IntGrid
+import Util
+
 import qualified Data.List as List
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
-type Point = (Int, Int)
-type Grid = Map Point Int
+parseInput :: String -> Grid
+parseInput = parseIntGrid
 
-get :: Grid -> Point -> Int
-get g p = fromJust (Map.lookup p g)
+adjacentPts :: Point -> Point -> [Point]
+ -- Only non-diagonal adjacency
+adjacentPts = adjacentPoints False
 
 setHead :: Set.Set a -> a
 setHead = head . Set.toList . Set.take 1
@@ -20,26 +22,8 @@ setHead = head . Set.toList . Set.take 1
 setTail :: Set.Set a -> Set.Set a
 setTail = Set.drop 1
 
-parseInput :: String -> Grid
-parseInput = Map.fromList . map (Data.Bifunctor.second charToInt) . concatMap (\(y, s) -> zipWith (\a b -> ((a, y), b)) [0..] s) . zip [0..] . lines
-
-maxBy :: Ord a => ((a, a) -> a) -> [(a, a)] -> a
-maxBy f = maximum . map f
-
-maxPt :: Grid -> Point
-maxPt g = (maxBy fst (Map.keys g), maxBy snd (Map.keys g))
-
-adjacentPoints :: Point -> Point -> [Point]
-adjacentPoints (maxX, maxY) (x,y) = [(x+m, y+n) | m <- [-1,0,1], n <- [-1,0,1],
-    (m == 0 && n /= 0) || (m /= 0 && n == 0), -- Only non-diagonal adjacency
-    x + m >= 0,
-    y + n >= 0,
-    x + m <= maxX,
-    y + n <= maxY
-  ]
-
 allNeighborsGreaterThanPoint :: Grid -> Point -> Bool
-allNeighborsGreaterThanPoint g p = all ((> get g p) . get g) (adjacentPoints (maxPt g) p)
+allNeighborsGreaterThanPoint g p = all ((> get g p) . get g) (adjacentPts (maxPt g) p)
 
 getLowPoints :: Grid -> [Point]
 getLowPoints g = filter (allNeighborsGreaterThanPoint g) (Map.keys g)
@@ -53,7 +37,7 @@ getBasinSize g lowPoint = go (Set.fromList [lowPoint]) Set.empty where
      processPoint :: Point -> Int
      processPoint p = go (Set.union (setTail toProcess) createNewToProcess) (Set.insert p visited) where
        createNewToProcess :: Set.Set Point
-       createNewToProcess = Set.fromList (filter (\x -> x `Set.notMember` visited && get g p < 9) (adjacentPoints (maxPt g) p))
+       createNewToProcess = Set.fromList (filter (\x -> x `Set.notMember` visited && get g p < 9) (adjacentPts (maxPt g) p))
 
 calcPart1 :: Grid -> Int
 calcPart1 g = (sum . map ((+1) . get g)) (getLowPoints g)

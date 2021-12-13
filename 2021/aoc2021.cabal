@@ -31,6 +31,7 @@ library
       Day7
       Day8
       Day9
+      IntGrid
       Util
   other-modules:
       Paths_aoc2021
