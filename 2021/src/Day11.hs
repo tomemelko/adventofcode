@@ -2,76 +2,80 @@ module Day11 where
 
 import Data.Map (Map)
 import Data.Set (Set)
-import IntGrid (Grid, Point)
+import Grid (Point)
+import IntGrid (IntGrid)
 import Util
 
 import qualified Data.Map as Map
 import qualified Data.Set as Set
+import qualified Grid
 import qualified IntGrid
 
-parseInput :: String -> Grid
+type OctopusGrid = (IntGrid, Int)
+
+parseInput :: String -> IntGrid
 parseInput = IntGrid.parseIntGrid
 
 adjacentPoints :: Point -> Point -> [Point]
-adjacentPoints = IntGrid.adjacentPoints True
+adjacentPoints = Grid.adjacentPoints True
 
-countCollapsingAdj :: Grid -> Point -> Int
-countCollapsingAdj g = count (>9) . map (IntGrid.get g) . adjacentPoints (IntGrid.maxPt g)
+countCollapsingAdj :: IntGrid -> Point -> Int
+countCollapsingAdj g = count (>9) . map (Grid.get g) . adjacentPoints (Grid.maxPt g)
 
 collapses :: Int -> Bool
 collapses = (>9)
 
-resetCollapsed :: Set Point -> (Grid, Int) -> (Grid, Int)
+resetCollapsed :: Set Point -> OctopusGrid -> OctopusGrid
 resetCollapsed collapsed = go (Set.toList collapsed) where
-  go :: [Point] -> (Grid, Int) -> (Grid, Int)
+  go :: [Point] -> OctopusGrid -> OctopusGrid
   go [] v = v
-  go l (g, i) = go (tail l) (IntGrid.set (head l) 0 g , i)
+  go l (g, i) = go (tail l) (Grid.set (head l) 0 g , i)
 
-doCollapses :: (Grid, Int) -> (Grid, Int)
+doCollapses :: OctopusGrid -> OctopusGrid
 doCollapses (g', i') = go (g', i', Set.empty) where
-  go :: (Grid, Int, Set Point) -> (Grid, Int)
+  go :: (IntGrid, Int, Set Point) -> OctopusGrid
   go (g, i, s)
     | not (any collapses g) = resetCollapsed s (g, i)
     | otherwise = go (updateGrid g, updateCollapsedCount i g, updateCollapsedSet s g) where
-      updateGrid :: Grid -> Grid
+      updateGrid :: IntGrid -> IntGrid
       updateGrid = Map.mapWithKey (\k v -> if collapses v then 0 else v + countCollapsingAdj g k)
-      updateCollapsedCount :: Int -> Grid -> Int
+      updateCollapsedCount :: Int -> IntGrid -> Int
       updateCollapsedCount i = (+i) . (count collapses . Map.elems)
-      updateCollapsedSet :: Set Point -> Grid -> Set Point
+      updateCollapsedSet :: Set Point -> IntGrid -> Set Point
       updateCollapsedSet s = Set.union s . Set.fromList . Map.keys . Map.filter collapses
 
-doOneCollapse :: (Grid, Int) -> (Grid, Int)
+doOneCollapse :: OctopusGrid -> OctopusGrid
 doOneCollapse (g, i)
   | not (any collapses g) = (g, i)
   | otherwise = (updateGrid g, updateCollapsedCount i g) where
-    updateGrid :: Grid -> Grid
+    updateGrid :: IntGrid -> IntGrid
     updateGrid = Map.mapWithKey (\k v -> if collapses v then 0 else v + countCollapsingAdj g k)
-    updateCollapsedCount :: Int -> Grid -> Int
+    updateCollapsedCount :: Int -> IntGrid -> Int
     updateCollapsedCount i = (+i) . (count collapses . Map.elems)
 
-doOneCollapse' :: Grid -> Grid
+doOneCollapse' :: IntGrid -> IntGrid
 doOneCollapse' g = (fst . doOneCollapse) (g, 0)
 
-doRound :: (Grid, Int) -> (Grid, Int)
+doRound :: OctopusGrid -> OctopusGrid
 doRound (g, i) = doCollapses (Map.map (+1) g, i)
 
-doRounds :: Int -> Grid -> (Grid, Int)
+doRounds :: Int -> IntGrid -> OctopusGrid
 doRounds limit g = go limit (g, 0) where
-  go :: Int -> (Grid, Int) -> (Grid, Int)
+  go :: Int -> OctopusGrid -> OctopusGrid
   go 0 (g, i) = (g, i)
   go c v = go (c - 1) (doRound v)
 
-getFirstRoundOfSimultaneousFlash :: Grid -> Int
+getFirstRoundOfSimultaneousFlash :: IntGrid -> Int
 getFirstRoundOfSimultaneousFlash = go 0 where
-  go :: Int -> Grid -> Int
+  go :: Int -> IntGrid -> Int
   go roundNumber g
     | all (==0) g = roundNumber
     | otherwise = go (roundNumber + 1) ((fst . doRound) (g, 0))
 
-calcPart1 :: Grid -> Int
+calcPart1 :: IntGrid -> Int
 calcPart1 = snd . doRounds 100
 
-calcPart2 :: Grid -> Int
+calcPart2 :: IntGrid -> Int
 calcPart2 = getFirstRoundOfSimultaneousFlash
 
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
