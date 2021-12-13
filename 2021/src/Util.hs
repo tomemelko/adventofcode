@@ -26,6 +26,11 @@ split p s = case dropWhile p s of
   s' -> w : split p s''
     where (w, s'') = break p s'
 
+splitToTuple :: (Char -> Bool) -> String -> (String, String)
+splitToTuple p s = go (split p s) where
+  go :: [String] -> (String, String)
+  go xs = (head xs, (head . tail) xs)
+
 count :: (a -> Bool) -> [a] -> Int
 count f = length . filter f
 
