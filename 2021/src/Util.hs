@@ -1,12 +1,4 @@
-module Util (
-  readInput
-, parseInt
-, charToInt
-, formatResultOutput
-, printDayResult
-, split
-, count
-) where
+module Util where
 
 import Data.Maybe
 import Text.Read
@@ -36,3 +28,6 @@ split p s = case dropWhile p s of
 
 count :: (a -> Bool) -> [a] -> Int
 count f = length . filter f
+
+deMaybe :: Eq a => [Maybe a] -> [a]
+deMaybe = map fromJust . filter (/= Nothing)
