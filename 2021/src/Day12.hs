@@ -18,7 +18,7 @@ startNode = "start"
 endNode = "end"
 
 updateEdges :: Edges -> String -> Edges
-updateEdges es s = go es (splitToTuple (=='-') s) where
+updateEdges es s = go es (splitToPair (=='-') s) where
   go :: Edges -> (String, String) -> Edges
   go es (s1 , s2) = Map.unionWith Set.union es ((Map.fromList . map (Data.Bifunctor.second Set.fromList)) [(s1, [s2]), (s2, [s1])])
 

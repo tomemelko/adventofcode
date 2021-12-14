@@ -13,7 +13,7 @@ type Fold = (IsVertical, Int)
 type DotGrid = Grid Bool
 
 parsePoint :: String -> Point
-parsePoint = Data.Bifunctor.bimap parseInt parseInt . splitToTuple (==',')
+parsePoint = Data.Bifunctor.bimap parseInt parseInt . splitToPair (==',')
 
 parseGrid :: [String] -> DotGrid
 parseGrid = foldl (\g v -> Map.insert (parsePoint v) True g) Grid.empty
@@ -21,10 +21,10 @@ parseGrid = foldl (\g v -> Map.insert (parsePoint v) True g) Grid.empty
 parseFolds :: [String] -> [Fold]
 parseFolds = map parseFold where
   parseFold :: String -> Fold
-  parseFold = Data.Bifunctor.bimap (=="x") parseInt . splitToTuple (=='=') . last . words
+  parseFold = Data.Bifunctor.bimap (=="x") parseInt . splitToPair (=='=') . last . words
 
 parseInput :: String -> (DotGrid, [Fold])
-parseInput = go . splitToTuple (=="") . lines where
+parseInput = go . splitToPair (=="") . lines where
   go :: ([String], [String]) -> (DotGrid, [Fold])
   go (gs, fs) = (parseGrid gs, parseFolds fs)
 

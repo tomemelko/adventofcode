@@ -26,8 +26,8 @@ split p s = case dropWhile p s of
   s' -> w : split p s''
     where (w, s'') = break p s'
 
-splitToTuple :: (a -> Bool) -> [a] -> ([a], [a])
-splitToTuple p s = go (split p s) where
+splitToPair :: (a -> Bool) -> [a] -> ([a], [a])
+splitToPair p s = go (split p s) where
   go :: [[a]] -> ([a], [a])
   go xs = (head xs, (head . tail) xs)
 
