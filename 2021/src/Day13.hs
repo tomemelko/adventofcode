@@ -57,7 +57,12 @@ doFold g f = Map.unionWith (||) (cutGrid (<) g f) (flip (snd f) (cutGrid (>) g f
 calcPart1 :: (DotGrid, [Fold]) -> Int
 calcPart1 (g, fs) = (length . Map.keys . doFold g) (head fs)
 
-showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
+calcPart2 :: (DotGrid, [Fold]) -> String
+calcPart2 (g, fs) = Grid.tableString '.' $ Map.map (\x -> if x then '#' else '.') $ foldl doFold g fs
+
+showDay :: (Integer -> String -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   inStr <- readInput filename
-  printPartResult 1 $ (calcPart1 . parseInput) inStr
+  printPartResult 1 $ (show . calcPart1 . parseInput) inStr
+  printPartResult 2 ""
+  putStrLn $ (calcPart2 . parseInput) inStr

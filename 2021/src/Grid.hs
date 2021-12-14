@@ -11,20 +11,26 @@ type Grid a = Map Point a
 get :: Grid a -> Point -> a
 get g p = fromJust (Map.lookup p g)
 
+getWithDefault :: Grid a -> a -> Point -> a
+getWithDefault g v p = go (Map.lookup p g) v where
+  go :: Maybe a -> a -> a
+  go Nothing v = v
+  go (Just x) _ = x
+
 set :: Point -> a -> Grid a -> Grid a
 set = Map.insert
 
 empty :: Grid a
 empty = Map.empty
 
-rowString :: Show a => Int -> Int -> Grid a -> String
-rowString maxCol r g = unwords [ (show . get g) (r, col) | col <- [0..maxCol]]
+rowString :: Show a => Int -> Int -> Grid a -> a -> String
+rowString maxCol r g v = concat [ (show . getWithDefault g v) (col, r) | col <- [0..maxCol]]
 
-tableString :: Show a => Grid a -> String
-tableString g = unlines [ rowString ((snd . maxPt) g) r g | r <- [0..(fst . maxPt) g] ]
+tableString :: Show a => a -> Grid a -> String
+tableString v g = unlines [ rowString ((fst . maxPt) g) r g v | r <- [0..(snd . maxPt) g] ]
 
-prettyPrint :: Show a => Grid a -> IO ()
-prettyPrint = putStr . tableString
+prettyPrint :: Show a => a -> Grid a -> IO ()
+prettyPrint nothingVal g = putStr $ tableString nothingVal g
 
 maxBy :: Ord a => ((a, a) -> a) -> [(a, a)] -> a
 maxBy f = maximum . map f
