@@ -3,6 +3,7 @@
     "accum",
     "addsert",
     "Bifunctor",
+    "bimap",
     "foldl",
     "permutate",
     "uncurry",

@@ -14,6 +14,9 @@ get g p = fromJust (Map.lookup p g)
 set :: Point -> a -> Grid a -> Grid a
 set = Map.insert
 
+empty :: Grid a
+empty = Map.empty
+
 rowString :: Show a => Int -> Int -> Grid a -> String
 rowString maxCol r g = unwords [ (show . get g) (r, col) | col <- [0..maxCol]]
 
