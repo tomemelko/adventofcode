@@ -40,7 +40,11 @@ freqDiff m = maximum m - minimum m
 calcPart1 :: (Sequence, PairInsertions) -> Int
 calcPart1 (s, pis) = (freqDiff . freq) (doInsertionTicks 10 s pis)
 
+calcPart2 :: (Sequence, PairInsertions) -> Int
+calcPart2 (s, pis) = (freqDiff . freq) (doInsertionTicks 40 s pis)
+
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   inStr <- readInput filename
   printPartResult 1 $ (calcPart1 . parseInput) inStr
+  printPartResult 2 $ (calcPart2 . parseInput) inStr
