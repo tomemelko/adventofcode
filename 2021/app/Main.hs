@@ -38,6 +38,7 @@ main = do
       Day11.showDay (printDayResult 11) "inputs/Day11/input.txt"
       Day12.showDay (printDayResult 12) "inputs/Day12/input.txt"
       Day13.showDay (printDayResult 13) "inputs/Day13/input.txt"
+      Day14.showDay (printDayResult 14) "inputs/Day14/input.txt"
     ["today", "easy"] -> Day14.showDay (printDayResult 14) "inputs/Day14/input_simple.txt"
     ["today", "hard"] -> Day14.showDay (printDayResult 14) "inputs/Day14/input.txt"
     
