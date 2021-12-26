@@ -21,7 +21,6 @@ source-repository head
 
 library
   exposed-modules:
-      AStar
       Day1
       Day10
       Day11
@@ -47,7 +46,6 @@ library
   build-depends:
       base >=4.7 && <5
     , containers >0.6
-    , pqueue >=1.4.1.4
   default-language: Haskell2010
 
 executable aoc2021-exe
@@ -61,5 +59,4 @@ executable aoc2021-exe
       aoc2021
     , base >=4.7 && <5
     , containers >0.6
-    , pqueue >=1.4.1.4
   default-language: Haskell2010
