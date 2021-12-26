@@ -1,15 +1,13 @@
 module Day15 where
 
-import Data.Set (Set)
 import Grid (Point)
 import IntGrid (IntGrid)
+import AStar
 import Util
 
 import qualified Grid
 import qualified IntGrid
-import qualified Data.Set as Set
-
-type VisitedPoints = Set Point
+import Data.Maybe (fromJust)
 
 parseInput :: String -> IntGrid
 parseInput = IntGrid.parseIntGrid
@@ -18,20 +16,22 @@ adjacentPoints :: Point -> Point -> [Point]
  -- Only non-diagonal adjacency
 adjacentPoints = Grid.adjacentPoints False
 
-minWithDefault :: [Int] -> Int
-minWithDefault l = minimum (999999999 : l) 
+adjacentPoints' :: IntGrid -> Point -> [Point]
+adjacentPoints' g = adjacentPoints (Grid.maxPt g)
 
-traverseCave :: Point -> Point -> IntGrid -> Int
-traverseCave currentPoint goalPoint g
-  | currentPoint == goalPoint = 0
-  | otherwise = minWithDefault [ traverseCave p goalPoint g + Grid.get g p | p <- adjacentPoints (Grid.maxPt g) currentPoint, fst p > fst currentPoint || snd p > snd currentPoint ]
+adjacencyFn :: IntGrid -> Point -> [(Point, Int)]
+adjacencyFn g pt = map fixr (adjacentPoints' g pt) where
+  fixr :: Point -> (Point, Int)
+  fixr adjPt = (adjPt, Grid.get g adjPt)
+
+heuristic :: Point -> Int
+heuristic _ = 0
 
 calcPart1 :: IntGrid -> Int
-calcPart1 g = traverseCave (0, 0) (Grid.maxPt g) g
+calcPart1 g = (fst . fromJust) (astarSearch (0, 0) (== Grid.maxPt g) (adjacencyFn g) heuristic)
 
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   inStr <- readInput filename
-  -- Grid.prettyPrint 0 $ parseInput inStr
   printPartResult 1 $ (calcPart1 . parseInput) inStr
   -- printPartResult 2 $ (calcPart2 . parseInput) inStr
