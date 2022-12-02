@@ -1,4 +1,4 @@
-module Main where
+module Main( main ) where
 
 import System.Environment
 
@@ -15,4 +15,5 @@ main = do
       Day1.showDay (printDayResult 1) "inputs/Day1/input.txt"
     ["today", "easy"] -> Day1.showDay (printDayResult 17) "inputs/Day1/input_simple.txt"
     ["today", "hard"] -> Day1.showDay (printDayResult 17) "inputs/Day1/input.txt"
+    _ -> do print "Invalid command"
     
