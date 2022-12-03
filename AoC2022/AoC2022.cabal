@@ -24,6 +24,7 @@ library
   exposed-modules:
       AoC2022Day1
       AoC2022Day2
+      AoC2022Day3
       Util
   other-modules:
       Paths_AoC2022

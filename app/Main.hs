@@ -23,6 +23,7 @@ import qualified AoC2021Day15
 -- AoC 2022
 import qualified AoC2022Day1
 import qualified AoC2022Day2
+import qualified AoC2022Day3
 
 main :: IO ()
 main = do
@@ -49,7 +50,8 @@ main = do
       -- I really wish there was a way to reference these by string name so I didn't have to copy-paste these lines. Template Haskell looks scary :(
       AoC2022Day1.showDay (printDayResult 1) "AoC2022/inputs/Day1/input.txt"
       AoC2022Day2.showDay (printDayResult 2) "AoC2022/inputs/Day2/input.txt"
-    ["today", "easy"] -> AoC2022Day2.showDay (printDayResult 2) "AoC2022/inputs/Day2/input_simple.txt"
-    ["today", "hard"] -> AoC2022Day2.showDay (printDayResult 2) "AoC2022/inputs/Day2/input.txt"
+      AoC2022Day3.showDay (printDayResult 3) "AoC2022/inputs/Day3/input.txt"
+    ["today", "easy"] -> AoC2022Day3.showDay (printDayResult 3) "AoC2022/inputs/Day3/input_simple.txt"
+    ["today", "hard"] -> AoC2022Day3.showDay (printDayResult 3) "AoC2022/inputs/Day3/input.txt"
     _ -> do print "Invalid command"
     
