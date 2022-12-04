@@ -12,11 +12,17 @@ fullyContains xs = all (`elem` xs)
 checkPair :: ([Integer], [Integer]) -> Bool
 checkPair (as, bs) = as `fullyContains` bs || bs `fullyContains` as
 
+intersect :: [Integer] -> [Integer] -> [Integer]
+intersect xs = filter (`elem` xs)
+
+checkPairPt2 :: ([Integer], [Integer]) -> Bool
+checkPairPt2 (as, bs) = (as `intersect` bs) /= []
+
 calcPart1 :: [([Integer], [Integer])] -> Integer
 calcPart1 = toInteger . length . filter checkPair
 
--- calcPart2 :: [([Integer], [Integer])] -> Integer
--- calcPart2 = sum . map (score . head . intersectList) . chunksOf 3
+calcPart2 :: [([Integer], [Integer])] -> Integer
+calcPart2 = toInteger . length . filter checkPairPt2
 
 showDay :: (Integer -> Integer -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
@@ -24,4 +30,4 @@ showDay printPartResult filename = do
   -- Part 1
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ (calcPart2 . parseInput) in_str
