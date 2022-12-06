@@ -15,8 +15,14 @@ getFirstUniq = head . filter (\s -> length s == (length . nub) s)
 findString :: (Eq a) => [a] -> [a] -> Int
 findString search str = (fromJust . findIndex (isPrefixOf search)) (tails str)
 
+findStart :: Int -> String -> Int
+findStart windowSize s = findString ((getFirstUniq . slidingWindow windowSize) s) s + windowSize
+
 calcPart1 :: String -> Int
-calcPart1 s = findString ((getFirstUniq . slidingWindow 4) s) s + 4
+calcPart1 = findStart 4
+
+calcPart2 :: String -> Int
+calcPart2 = findStart 14
 
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
@@ -24,4 +30,4 @@ showDay printPartResult filename = do
   -- Part 1
   printPartResult 1 $ calcPart1 in_str
   -- Part 2
---   printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ calcPart2 in_str
