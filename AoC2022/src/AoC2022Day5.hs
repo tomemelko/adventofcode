@@ -32,10 +32,11 @@ parseInput s = ((parseBoard . head . splitOn "\n\n") s, (parseMoves . last . spl
 buildStack :: [String] -> Int -> Stack Crate
 buildStack ss index = foldr (\s accum -> if (s !! index) /= ' ' then stackPush accum (s !! index) else accum) stackNew ss
 
-runMove :: Move -> [Stack Crate] -> [Stack Crate]
-runMove m b
+
+runMovePt1 :: Move -> [Stack Crate] -> [Stack Crate]
+runMovePt1 m b
   | amount m == 0 = b
-  | otherwise = runMove Move{ amount = amount m - 1, from = from m, to = to m } ((pushNth (to m) . popNth (from m)) b) where
+  | otherwise = runMovePt1 Move{ amount = amount m - 1, from = from m, to = to m } ((pushNth (to m) . popNth (from m)) b) where
     popNth :: Integer -> [Stack Crate] -> ([Stack Crate], Crate)
     popNth 0 (b' : bs) = ((fst . fromJust . stackPop) b' : bs, (snd . fromJust . stackPop) b')
     popNth n (b' : bs) = Data.Bifunctor.first (b' :) (popNth (n - 1) bs)
@@ -43,16 +44,21 @@ runMove m b
     pushNth 0 (b' : bs, x) = stackPush b' x : bs
     pushNth n (b' : bs, x) = b' : pushNth (n - 1) (bs, x)
 
+runMovePt2 :: Move -> [Stack Crate] -> [Stack Crate]
+runMovePt2 m b = (tail . runMovePt1 Move{ amount = amount m, from = 0, to = to m + 1 } . runMovePt1 Move{ amount = amount m, from = from m + 1, to = 0}) (stackNew : b)
 
-runMoves :: ([Stack Crate], [Move]) -> [Stack Crate]
-runMoves (ss, []) = ss
-runMoves (ss, x : xs) = runMoves (runMove x ss, xs)
+runMoves :: (Move -> [Stack Crate] -> [Stack Crate]) -> ([Stack Crate], [Move]) -> [Stack Crate]
+runMoves _ (ss, []) = ss
+runMoves runMove (ss, x : xs) = runMoves runMove (runMove x ss, xs)
 
 getTops :: [Stack Crate] -> [Crate]
 getTops = map (fromJust . stackPeek)
 
 calcPart1 :: ([Stack Crate], [Move]) -> [Crate]
-calcPart1 = getTops . runMoves
+calcPart1 = getTops . runMoves runMovePt1
+
+calcPart2 :: ([Stack Crate], [Move]) -> [Crate]
+calcPart2 = getTops . runMoves runMovePt2
 
 showDay :: (Integer -> String -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
@@ -60,4 +66,4 @@ showDay printPartResult filename = do
   -- Part 1
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ (calcPart2 . parseInput) in_str
