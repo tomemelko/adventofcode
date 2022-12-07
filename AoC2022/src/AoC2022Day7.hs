@@ -2,6 +2,7 @@ module AoC2022Day7( showDay ) where
 
 import Util
 import Data.Map (Map)
+import Data.Maybe
 import qualified Data.Map as Map
 
 -- Add some type aliases
@@ -55,10 +56,17 @@ readDirSizes = snd . foldl handleEntry (["/"], Map.empty)
 calcPart1 :: [InputEntry] -> Integer
 calcPart1 = sum . filter (<=100000) . Map.elems . readDirSizes
 
+calcPart2 :: [InputEntry] -> Integer
+calcPart2 es = (minimum . filter (>= 30000000 - remainingSpace) . Map.elems) dirSizes where
+    remainingSpace :: Integer
+    remainingSpace = ((-) 70000000 . fromJust . Map.lookup ["/"]) dirSizes
+    dirSizes :: Map [String] Integer
+    dirSizes = readDirSizes es
+
 showDay :: (Integer -> Integer -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   in_str <- readInput filename
   -- Part 1
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
---   printPartResult 2 $ (calcPart1 . parseInput) in_str
+  printPartResult 2 $ (calcPart2 . parseInput) in_str
