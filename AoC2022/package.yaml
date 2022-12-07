@@ -19,6 +19,7 @@ dependencies:
 - base >= 4.7 && < 5
 - split >= 0.2.3.5
 - Stack >= 0.4.0
+- containers >= 0.6.5.1
 
 ghc-options:
 - -Wall
