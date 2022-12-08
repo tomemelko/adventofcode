@@ -12,3 +12,6 @@ formatResultOutput dayNum partNum resultVal = "Day " ++ show dayNum ++ " Part " 
 
 parseInt :: HasCallStack => String -> Integer
 parseInt = fromJust . readMaybe
+
+parseIntChar :: HasCallStack => Char -> Integer
+parseIntChar = parseInt . (: [])

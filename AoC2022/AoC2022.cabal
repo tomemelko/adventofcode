@@ -29,6 +29,7 @@ library
       AoC2022Day5
       AoC2022Day6
       AoC2022Day7
+      AoC2022Day8
       Util
   other-modules:
       Paths_AoC2022
