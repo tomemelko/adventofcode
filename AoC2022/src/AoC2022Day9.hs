@@ -44,10 +44,13 @@ tailPath = reverse . foldl update []
 calcPart1 :: [Move] -> Int
 calcPart1 = Set.size . Set.fromList . tailPath . headPath
 
+calcPart2 :: [Move] -> Int
+calcPart2 = Set.size . Set.fromList . (!!9) . iterate tailPath . headPath
+
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   in_str <- readInput filename
   -- Part 1 
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ (calcPart2 . parseInput) in_str
