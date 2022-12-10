@@ -1,6 +1,7 @@
 module AoC2022Day10( showDay ) where
 
 import qualified Data.Bifunctor
+import Data.List.Split
 import Util
 
 type Instruction = Either () Int
@@ -26,8 +27,14 @@ getCycleValues = reverse . fst . foldl f ([], 1) where
 getScores :: [Int] -> [Int]
 getScores vs = map (\i -> i * (vs !! (i - 1))) [20,60..(length vs)]
 
+drawLine :: [Int] -> String
+drawLine vs = map (\i -> if abs (i - (vs !! i)) <= 1 then '#' else '.') [0..(length vs - 1)]
+
 calcPart1 :: [Instruction] -> Int
 calcPart1 = sum . getScores . getCycleValues
+
+calcPart2 :: [Instruction] -> String
+calcPart2 = unlines . map drawLine . chunksOf 40 . getCycleValues
 
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
@@ -35,4 +42,5 @@ showDay printPartResult filename = do
   -- Part 1 
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 0
+  putStrLn $ (calcPart2 . parseInput) in_str
