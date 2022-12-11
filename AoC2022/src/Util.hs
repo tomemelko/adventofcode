@@ -15,3 +15,6 @@ parseInt = fromJust . readMaybe
 
 parseIntChar :: HasCallStack => Char -> Integer
 parseIntChar = parseInt . (: [])
+
+append :: [a] -> a -> [a]
+append xs x = (reverse . (x:) . reverse) xs
