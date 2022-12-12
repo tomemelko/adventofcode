@@ -89,10 +89,13 @@ shortestPath startNode nextNodeQuery goalPred = go (Seq.singleton (startNode, 0)
 calcPart1 :: [[Char]] -> Int
 calcPart1 grid = shortestPath (getEnd grid) (fromJust . (`Map.lookup` buildGraph grid)) (==getStart grid)
 
+calcPart2 :: [[Char]] -> Int
+calcPart2 grid = shortestPath (getEnd grid) (fromJust . (`Map.lookup` buildGraph grid)) (\n -> getHeightAt n grid == 0)
+
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   in_str <- readInput filename
   -- Part 1 
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ (calcPart2 . parseInput) in_str
