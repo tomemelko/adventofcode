@@ -44,10 +44,10 @@ getHeightAt :: (Int, Int) -> [[Char]] -> Int
 getHeightAt (x, y) grid = getHeight ((grid !! y) !! x)
 
 canClimb :: [[Char]] -> (Int, Int) -> (Int, Int) -> Bool
-canClimb grid pos1 pos2 = (getHeightAt pos2 grid - getHeightAt pos1 grid) <= 1
+canClimb grid pos1 pos2 = (getHeightAt pos1 grid - getHeightAt pos2 grid) <= 1
 
-possibleSteps :: Node -> [[Char]] -> [Node]
-possibleSteps curLoc@(curX, curY) grid = [(curX + dX, curY + dY) |
+possibleSteps :: [[Char]] -> Node -> [Node]
+possibleSteps grid curLoc@(curX, curY) = [(curX + dX, curY + dY) |
                                             -- Set up deltas, check bounds
                                             dX <- [(-1)..1], curX + dX >= 0, curX + dX < (length . head) grid,
                                             dY <- [(-1)..1], curY + dY >= 0, curY + dY < length grid,
@@ -66,19 +66,20 @@ createPointArray maxX maxY = go 0 where
 buildGraph :: [[Char]] -> Graph
 buildGraph grid = foldl go Map.empty (createPointArray ((length . head) grid) (length grid)) where
   go :: Graph -> [(Int, Int)] -> Graph
-  go g pts = foldl (\accum pt -> Map.insert pt (possibleSteps pt grid) accum) g pts
+  go g pts = foldl (\accum pt -> Map.insert pt (possibleSteps grid pt) accum) g pts
 
 appendList :: Seq a -> [a] -> Seq a
 appendList q vs = Seq.fromList (toList q ++ vs)
 
-shortestPath :: Graph -> Node -> Node -> Int
-shortestPath g startNode endNode = go (Seq.singleton (startNode, 0)) (Set.fromList [startNode]) where
+shortestPath :: Node -> (Node -> [Node]) -> (Node -> Bool) -> Int
+shortestPath startNode nextNodeQuery goalPred = go (Seq.singleton (startNode, 0)) (Set.fromList [startNode]) where
   go :: Seq (Node, Int) -> VisitedNodes -> Int
   go q vns
-    | fst dequeuedElem == endNode = snd dequeuedElem
+    | Seq.null q = 1000000000
+    | goalPred (fst dequeuedElem) = snd dequeuedElem
     | otherwise = go (appendList dequeued nextNodes) nextVisited where
       nextNodes :: [(Node, Int)]
-      nextNodes = (map (\x -> (x, snd dequeuedElem + 1)). filter (\x -> x `notElem` vns && x `notElem` map fst (toList dequeued)) . fromJust . Map.lookup (fst dequeuedElem)) g
+      nextNodes = (map (\x -> (x, snd dequeuedElem + 1)) . filter (\x -> x `notElem` vns && x `notElem` map fst (toList dequeued)) . nextNodeQuery . fst) dequeuedElem
       dequeued :: Seq (Node, Int)
       dequeued = Seq.drop 1 q
       nextVisited :: Set Node
@@ -86,7 +87,7 @@ shortestPath g startNode endNode = go (Seq.singleton (startNode, 0)) (Set.fromLi
       dequeuedElem = q `Seq.index` 0
 
 calcPart1 :: [[Char]] -> Int
-calcPart1 grid = shortestPath (buildGraph grid) (getStart grid) (getEnd grid)
+calcPart1 grid = shortestPath (getEnd grid) (fromJust . (`Map.lookup` buildGraph grid)) (==getStart grid)
 
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
