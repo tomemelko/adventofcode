@@ -47,8 +47,22 @@ countSandFalls s
   | fallSand (500, 0) s == s = 0
   | otherwise = 1 + countSandFalls (fallSand (500, 0) s)
 
+addFloor :: (Integer, Set Point) -> (Integer, Set Point)
+addFloor = go (-1000) where
+  go :: Integer -> (Integer, Set Point) -> (Integer, Set Point)
+  go 1000 (maxY, s) = (maxY + 2, s)
+  go curX (maxY, s) = go (curX + 1) (maxY, Set.insert (curX, maxY + 2) s)
+
+countSandFallsPt2 :: (Integer, Set Point) -> Integer
+countSandFallsPt2 t@(_, s)
+  | Set.member (500, 0) s = 0
+  | otherwise = 1 + countSandFallsPt2 (fallSand (500, 0) t)
+
 calcPart1 :: (Integer, Set Point) -> Integer
 calcPart1 = countSandFalls
+
+calcPart2 :: (Integer, Set Point) -> Integer
+calcPart2 = countSandFallsPt2 . addFloor
 
 showDay :: (Integer -> Integer -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
@@ -56,4 +70,4 @@ showDay printPartResult filename = do
   -- Part 1
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ (calcPart2 . parseInput) in_str
