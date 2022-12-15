@@ -1,11 +1,15 @@
 module AoC2022Day15( showDay ) where
 
+import Data.Map (Map)
+import Data.Maybe
 import Data.Set (Set)
 import Util
 
+import qualified Data.Map as Map
 import qualified Data.Set as Set
 
 type Point = (Integer, Integer)
+type Range = (Integer, Integer)
 data Sensor = Sensor { loc :: Point, closestBeacon :: Point } deriving (Show)
 
 parseInput :: String -> [Sensor]
@@ -26,22 +30,29 @@ measureManhattanDistance (p1X, p1Y) (p2X, p2Y) = abs (p1X - p2X) + abs (p1Y - p2
 beaconDistance :: Sensor -> Integer
 beaconDistance s = measureManhattanDistance (loc s) (closestBeacon s)
 
-getPointsWithinRange :: (Set Point, Sensor) -> Set Point
-getPointsWithinRange (s, sensor) = Set.fromList [((fst . loc) sensor + dX, (snd . loc) sensor + dY) |
-                                        dX <- [(-distance)..distance],
-                                        dY <- [(-distance)..distance],
-                                        measureManhattanDistance (loc sensor) ((fst . loc) sensor + dX, (snd . loc) sensor + dY) <= distance,
-                                        ((fst . loc) sensor + dX, (snd . loc) sensor + dY) `Set.notMember` s] where
+getRange :: Sensor -> Map Integer [Range]
+getRange sensor = foldl updateMap Map.empty [(-distance)..distance] where
   distance :: Integer
   distance = beaconDistance sensor
+  updateMap :: Map Integer [Range] -> Integer -> Map Integer [Range]
+  updateMap m dY = Map.insert ((snd . loc) sensor + dY) [((fst . loc) sensor - dX, (fst . loc) sensor + dX)] m where
+    dX :: Integer
+    dX = distance - abs dY
 
-getCoveredPoints :: [Sensor] -> Set Point
-getCoveredPoints = foldl f Set.empty where
-  f :: Set Point -> Sensor -> Set Point
-  f s sensor = Set.union s (getPointsWithinRange (s, sensor))
+getRanges :: [Sensor] -> Map Integer [Range]
+getRanges = foldl (Map.unionWith (++)) Map.empty . map getRange
+
+countCoveredForY :: Integer -> Set Point -> Map Integer [Range] -> Int
+countCoveredForY y beacons m = (length . filter (`Set.notMember` beacons)) [(x, y) | x <- [minX..maxX]] where
+  minX :: Integer
+  minX = (minimum . map fst) ranges
+  maxX :: Integer
+  maxX = (maximum . map snd) ranges
+  ranges :: [Range]
+  ranges = (fromJust . Map.lookup y) m
 
 calcPart1 :: [Sensor] -> Int
-calcPart1 ss = (length . filter (==2000000) . map snd . Set.toList . flip Set.difference ((Set.fromList . map closestBeacon) ss) . getCoveredPoints) ss
+calcPart1 ss = countCoveredForY 2000000 ((Set.fromList . map closestBeacon) ss) (getRanges ss)
 
 showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
