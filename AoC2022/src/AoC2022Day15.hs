@@ -40,21 +40,37 @@ getRange sensor = foldl updateMap Map.empty [(-distance)..distance] where
     dX = distance - abs dY
 
 getRanges :: [Sensor] -> Map Integer [Range]
-getRanges = foldl (Map.unionWith (++)) Map.empty . map getRange
+getRanges = Map.map (unionRanges . reverse) . foldl (Map.unionWith f) Map.empty . map getRange where
+  f :: [Range] -> [Range] -> [Range]
+  f rs1 rs2 = unionRanges (rs1 ++ rs2)
 
-countCoveredForY :: Integer -> Set Point -> Map Integer [Range] -> Int
-countCoveredForY y beacons m = (length . filter (`Set.notMember` beacons)) [(x, y) | x <- [minX..maxX]] where
-  minX :: Integer
-  minX = (minimum . map fst) ranges
-  maxX :: Integer
-  maxX = (maximum . map snd) ranges
+numberInRange :: Integer -> Range -> Bool
+numberInRange x (minX, maxX) = x >= minX && x <= maxX
+
+rangesOverlap :: Range -> Range -> Bool
+rangesOverlap r1@(r1min, r1max) (r2min, r2max) = numberInRange r2min r1 || numberInRange r2max r1 || r1max + 1 == r2min || r2max + 1 == r1min
+
+unionRanges :: [Range] -> [Range]
+unionRanges [] = []
+unionRanges (r@(rmin, rmax) : rs)
+  -- If none of the subsequent ranges overlap with the current range
+  | all ((==False) . rangesOverlap r) rs = r : unionRanges rs
+  -- Otherwise we have an overlap, modify the head of the list with the new range, then recurse
+  | otherwise = unionRanges ((minimum (rmin : map fst overlapping), maximum (rmax : map snd overlapping)) : filter (not . rangesOverlap r) rs) where
+    overlapping :: [Range]
+    overlapping = filter (rangesOverlap r) rs
+
+countCoveredForY :: Integer -> Map Integer [Range] -> Integer
+countCoveredForY y m = (sum . map rangeSize) ranges where
   ranges :: [Range]
   ranges = (fromJust . Map.lookup y) m
+  rangeSize :: Range -> Integer
+  rangeSize (rmin, rmax) = rmax - rmin
 
-calcPart1 :: [Sensor] -> Int
-calcPart1 ss = countCoveredForY 2000000 ((Set.fromList . map closestBeacon) ss) (getRanges ss)
+calcPart1 :: [Sensor] -> Integer
+calcPart1 = countCoveredForY 2000000 . getRanges
 
-showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
+showDay :: (Integer -> Integer -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   in_str <- readInput filename
   -- Part 1
