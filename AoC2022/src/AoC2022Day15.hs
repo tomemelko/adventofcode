@@ -2,11 +2,9 @@ module AoC2022Day15( showDay ) where
 
 import Data.Map (Map)
 import Data.Maybe
-import Data.Set (Set)
 import Util
 
 import qualified Data.Map as Map
-import qualified Data.Set as Set
 
 type Point = (Integer, Integer)
 type Range = (Integer, Integer)
@@ -67,13 +65,23 @@ countCoveredForY y m = (sum . map rangeSize) ranges where
   rangeSize :: Range -> Integer
   rangeSize (rmin, rmax) = rmax - rmin
 
-calcPart1 :: [Sensor] -> Integer
-calcPart1 = countCoveredForY 2000000 . getRanges
+calcPart1 :: Integer -> Map Integer [Range] -> Integer
+calcPart1 = countCoveredForY
+
+calcPart2 :: Integer -> Map Integer [Range] -> Integer
+calcPart2 maxVal ranges = f missingPoint where
+  f :: [(Integer, [Range])] -> Integer
+  f [] = error "not existing"
+  f [(y, ranges)] = (((minimum . map snd) ranges + 1) * 4000000) + y
+  f (_ : _) = error "nope"
+  missingPoint :: [(Integer, [Range])]
+  missingPoint = (filter (\(_, l) -> length l > 1) . zip [0..] . map (fromJust . (`Map.lookup` ranges)) . filter (`numberInRange` (0, maxVal)) . Map.keys) ranges
 
 showDay :: (Integer -> Integer -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   in_str <- readInput filename
+  let ranges = (getRanges . parseInput) in_str
   -- Part 1
-  printPartResult 1 $ (calcPart1 . parseInput) in_str
+  printPartResult 1 $ calcPart1 2000000 ranges
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ calcPart2 4000000 ranges
