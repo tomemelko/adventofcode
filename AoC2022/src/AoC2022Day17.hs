@@ -1,6 +1,8 @@
 module AoC2022Day17( showDay ) where
 
 import Debug.Trace
+import Data.List (find)
+import Data.Maybe
 import Data.Set (Set)
 import Util
 
@@ -62,13 +64,35 @@ fallRock (blows, board, maxY) rock
 fallRocks :: Int -> [WindDirection] -> ([WindDirection], Set Point, Int)
 fallRocks count blows = (foldl (\acc@(_, _, maxY) nextRock -> fallRock acc (spawnRock maxY nextRock)) (blows, Set.fromList [(0,0), (1,0), (2,0), (3,0), (4,0), (5,0), (6,0)], 0) . take count) shapes
 
-calcPart1 :: [WindDirection] -> Int
-calcPart1 = thd3 . fallRocks 2022
+getProfile :: Set Point -> Set Point
+getProfile s = normalize filteredPts where
+  filteredPts :: Set Point
+  filteredPts = Set.filter (\(_, y) -> y > (maxY - 20)) s
+  normalize :: Set Point -> Set Point
+  normalize s' = Set.map (\(x, y) -> (x, y - minY s')) s'
+  maxY :: Int
+  maxY = (maximum . map snd . Set.toList) s
+  minY :: Set Point -> Int
+  minY s' = (minimum . map snd . Set.toList) s'
 
-showDay :: (Integer -> Int -> IO ()) -> String -> IO ()
+findCycle :: [WindDirection] -> (Int, Int)
+findCycle blows = ((\((_, _, maxY), loopLen) -> (loopLen, maxY - thd3 oneKresult)) . fromJust . find (\((_, p, _), _) -> prof == getProfile p) . map (\x -> (fallRocks (1000 + x) blows, x))) [5,10..] where
+  prof = (getProfile . snd3) oneKresult
+  oneKresult = fallRocks 1000 blows
+
+calcPart1 :: [WindDirection] -> Integer
+calcPart1 = fromIntegral . thd3 . fallRocks 2022
+
+calcPart2 :: [WindDirection] -> Integer
+calcPart2 blows = (((1000000000000 - 1000) `div` cycleLength) * cycleHeight) + (fromIntegral . thd3 . fallRocks (fromIntegral (((1000000000000 - 1000) `mod` cycleLength) + 1000))) blows where
+  cycleLength = (fromIntegral . fst) foundCycle
+  cycleHeight = (fromIntegral . snd) foundCycle
+  foundCycle = findCycle blows
+
+showDay :: (Integer -> Integer -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
   in_str <- readInput filename
   -- Part 1
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ (calcPart2 . parseInput) in_str
