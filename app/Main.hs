@@ -37,6 +37,7 @@ import qualified AoC2022Day13
 import qualified AoC2022Day14
 import qualified AoC2022Day15
 import qualified AoC2022Day16
+import qualified AoC2022Day17
 
 main :: IO ()
 main = do
@@ -76,8 +77,10 @@ main = do
       AoC2022Day13.showDay (printDayResult 13) "AoC2022/inputs/Day13/input.txt"
       AoC2022Day14.showDay (printDayResult 14) "AoC2022/inputs/Day14/input.txt"
       AoC2022Day15.showDay (printDayResult 15) "AoC2022/inputs/Day15/input.txt"
-      AoC2022Day16.showDay (printDayResult 16) "AoC2022/inputs/Day16/input.txt"
-    ["today", "easy"] -> AoC2022Day16.showDay (printDayResult 16) "AoC2022/inputs/Day16/input_simple.txt"
-    ["today", "hard"] -> AoC2022Day16.showDay (printDayResult 16) "AoC2022/inputs/Day16/input.txt"
+      -- Commented out because it takes 6 hours to run
+      -- AoC2022Day16.showDay (printDayResult 16) "AoC2022/inputs/Day16/input.txt"
+      AoC2022Day17.showDay (printDayResult 17) "AoC2022/inputs/Day17/input.txt"
+    ["today", "easy"] -> AoC2022Day17.showDay (printDayResult 17) "AoC2022/inputs/Day17/input_simple.txt"
+    ["today", "hard"] -> AoC2022Day17.showDay (printDayResult 17) "AoC2022/inputs/Day17/input.txt"
     _ -> do print "Invalid command"
     
