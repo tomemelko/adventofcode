@@ -47,14 +47,14 @@ buildGraph m = (foldl f Map.empty (Map.keys m), nonZeroValves) where
   nonZeroValves :: Map String Integer
   nonZeroValves = (Map.filter (>0) . Map.map rate) m
 
-findMaxPressure :: (Map String (Map String Integer), Map String Integer) -> Integer
-findMaxPressure (adj, rates) = (maximum . go) (Seq.singleton ("AA", Set.fromList ["AA"], (30, 0))) where
-  go :: Seq (String, Set String, (Integer, Integer)) -> [Integer]
+findPressures :: Integer -> (Set String, Integer) -> (Map String (Map String Integer), Map String Integer) -> [(Set String, Integer)]
+findPressures timeAllowed (prevVisited, prevPressure) (adj, rates) = go (Seq.singleton ("AA", prevVisited, (timeAllowed, prevPressure))) where
+  go :: Seq (String, Set String, (Integer, Integer)) -> [(Set String, Integer)]
   go q
     | Seq.null q = []
-    | timeRemaining <= 0 = pressure : go dequeuedQueue
-    | null nextValves = nextPressure : go dequeuedQueue
-    | otherwise = go (foldl (Seq.|>) dequeuedQueue nextElems) where
+    | timeRemaining <= 0 = (visited, pressure) : go dequeuedQueue
+    | null nextValves = (nextVisited, nextPressure) : go dequeuedQueue
+    | otherwise = (nextVisited, nextPressure) : go (foldl (Seq.|>) dequeuedQueue nextElems) where
       nextElems :: [(String, Set String, (Integer, Integer))]
       nextElems = map buildQueueElem nextValves
       buildQueueElem :: String -> (String, Set String, (Integer, Integer))
@@ -78,7 +78,11 @@ findMaxPressure (adj, rates) = (maximum . go) (Seq.singleton ("AA", Set.fromList
       pressure = (snd . thd3) dequeuedElem
 
 calcPart1 :: Map String Valve -> Integer
-calcPart1 = findMaxPressure . buildGraph
+calcPart1 = maximum . map snd . findPressures 30 (Set.fromList ["AA"], 0) . buildGraph
+
+calcPart2 :: Map String Valve -> Integer
+calcPart2 m = maximum . map snd $ concatMap (\x -> findPressures 26 x g) (findPressures 26 (Set.fromList ["AA"], 0) g) where
+  g = buildGraph m
 
 showDay :: (Integer -> Integer -> IO ()) -> String -> IO ()
 showDay printPartResult filename = do
@@ -86,4 +90,4 @@ showDay printPartResult filename = do
   -- Part 1
   printPartResult 1 $ (calcPart1 . parseInput) in_str
   -- Part 2
-  -- printPartResult 2 $ (calcPart2 . parseInput) in_str
+  printPartResult 2 $ (calcPart2 . parseInput) in_str
