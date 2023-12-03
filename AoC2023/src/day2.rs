@@ -31,13 +31,20 @@ fn part1(line: &str) -> bool {
   return check_game_possible(&process_line(line), m);
 }
 
+fn part2(line: &str) -> i32 {
+  let m = process_line(line);
+  return (*m.get("red").unwrap()) * (*m.get("green").unwrap())*(*m.get("blue").unwrap())
+}
+
 pub fn day2(raw_data: &str) {
-  let mut sum = 0;
+  let mut p1sum = 0;
+  let mut p2sum = 0;
   for (i, str) in raw_data.split('\n').enumerate() {
     if part1(str) {
-      sum += i + 1;
+      p1sum += i + 1;
     }
+    p2sum+= part2(str);
   }
-  println!("Part 1 result: {sum:?}");
-  // println!("Part 2 result: {:?}", sum);
+  println!("Part 1 result: {p1sum:?}");
+  println!("Part 2 result: {p2sum:?}");
 }
