@@ -3,6 +3,7 @@ use std::fs;
 
 mod day1;
 mod day2;
+mod day3;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -11,6 +12,7 @@ fn main() {
     let runners = [
       day1::day1,
       day2::day2,
+      day3::day3,
     ];
     let run_day = |i: usize| {
         let content = read_file_for_day(i + 1, *hard_mode);
